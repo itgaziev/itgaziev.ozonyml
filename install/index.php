@@ -27,7 +27,7 @@ class ITGaziev_OzonYML extends CModule {
             'task_description.php'
         );
 
-        $this->MODULE_ID = ITMODULE_NAME;
+        $this->MODULE_ID = 'itgaziev.ozonyml';
         $this->MODULE_VERSION = $arModuleVersion['VERSION'];
         $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         $this->MODULE_NAME = Loc::getMessage('ITGAZIEV_OZONYML_MODULE_NAME');
