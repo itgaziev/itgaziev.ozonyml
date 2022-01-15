@@ -18,9 +18,9 @@ if($accessLevel > 'D') {
             [
                 'text' => Loc::getMessage("ITGAZIEV_OZONYML_MENU_PRICE"),
                 'title' => Loc::getMessage("ITGAZIEV_OZONYML_MENU_PRICE"),
-                'url' => 'itgaziev.ozonyml_settings_list.php?lang='.LANGUAGE_ID,
+                'url' => 'itgaziev.ozonyml_price_list.php?lang='.LANGUAGE_ID,
                 'more_url' => array(
-                    'itgaziev.ozonyml_settings_edit.php'
+                    'itgaziev.ozonyml_price_edit.php'
                 )
             ]
         ],
