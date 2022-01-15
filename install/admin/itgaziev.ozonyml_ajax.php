@@ -1,0 +1,1 @@
+<?php require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/itgaziev.ozonyml/admin/ozonyml_ajax.php';
