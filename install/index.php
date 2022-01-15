@@ -44,15 +44,15 @@ class ITGaziev_OzonYML extends CModule {
     function InstallDB() {
         Loader::includeModule($this->MODULE_ID);
 
-        if(!Application::getConnection()->isTableExists(Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYML')->getDBTableName())) {
-            Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYML')->createDBTable();
+        if(!Application::getConnection()->isTableExists(Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYMLTable')->getDBTableName())) {
+            Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYMLTable')->createDBTable();
         }
     }
 
     function UnInstallDB() {
         Loader::includeModule($this->MODULE_ID);
 
-        Application::getConnection()->queryExecute('drop table if exists ' . Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYML')->getDBTableName());
+        Application::getConnection()->queryExecute('drop table if exists ' . Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYMLTable')->getDBTableName());
 
         Option::delete($this->MODULE_ID);
     }

@@ -4,7 +4,7 @@ namespace ITGaziev\OzonYML\Table;
 use \Bitrix\Main\Entity;
 use \Bitrix\Main\Type;
 
-class ITGazievOzonYML extends Entity\DataManager {
+class ITGazievOzonYMLTable extends Entity\DataManager {
     public static function getTableName() {
         return 'b_itgaziev_ozonyml';
     }

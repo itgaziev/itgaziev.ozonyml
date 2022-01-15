@@ -2,5 +2,5 @@
 use Bitrix\Main;
 
 Main\Loader::registerAutoLoadClasses('itgaziev.ozonyml', [
-    'ITGaziev\OzonYML\Table\ITGazievOzonYML' => '/lib/table/itgaziev_ozonyml.php',
+    'ITGaziev\OzonYML\Table\ITGazievOzonYMLTable' => '/lib/table/itgaziev_ozonyml.php',
 ]);
