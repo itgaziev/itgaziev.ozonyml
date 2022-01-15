@@ -69,13 +69,13 @@ class ITGaziev_OzonYML extends CModule {
         CopyDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/admin', true, true);
         CopyDirFiles(__DIR__ . '/themes', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/themes', true, true);
         CopyDirFiles(__DIR__ . '/assets/js', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/js/' . $this->MODULE_ID, true, true);
-        CopyDirFiles(__DIR__ . '/assets/img', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/images/' . $this->MODULE_ID, true, true);
+        //CopyDirFiles(__DIR__ . '/assets/img', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/images/' . $this->MODULE_ID, true, true);
     }
 
     function UnInstallFiles() {
         DeleteDirFiles(__DIR__ . '/admin', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/admin');
         DeleteDirFiles(__DIR__ . '/assets/js', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/js/' . $this->MODULE_ID);
-        DeleteDirFiles(__DIR__ . '/assets/img', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/images/' . $this->MODULE_ID);
+        //DeleteDirFiles(__DIR__ . '/assets/img', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/images/' . $this->MODULE_ID);
         DeleteDirFiles(__DIR__ . '/themes/.default', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/themes/.default');
     }
 
