@@ -20,4 +20,11 @@ $POST_RIGHT = $APPLICATION->GetGroupRight($module_id);
 if($POST_RIGHT == 'D') $APPLICATION->AuthForm(Loc::getMessage('ACCESS_DENIED'));
 
 $sTableID = Base::getInstance('\ITGaziev\OzonYML\Table\ITGazievOzonYMLTable')->getDBTableName();
+$oSort = new CAdminSorting($sTableID, 'ID', 'desc');
+$lAdmin = new CAdminList($sTableID, $oSort);
 
+//TODO : Settings before
+
+$APPLICATION->SetTitle('Список прайсов');
+
+require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_admin_after.php');
