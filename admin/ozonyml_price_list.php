@@ -141,7 +141,7 @@ while($arRes = $rsData->NavNext(true, 'f_')) {
 
     //$row->AddInputField('NAME', array('size' => 40));
     $row->AddViewField('NAME', '<a href="itgaziev.ozonyml_price_edit.php?ID=' . $f_ID . '&lang=' . LANG . '">' . $f_NAME . '</a>');
-    $row->AddViewField('RUN_PROCESS', '<a class="adm-btn adm-btn-save" href="itgaziev.ozonyml_price_run.php?ID=' . $f_ID . '&lang=' . LANG . '">' . Loc::getMessage('ITGAZIEV_OZONYML_PRICE_RUN_BTN') . '</a>');
+    $row->AddViewField('RUN_PROCESS', '<a class="adm-btn adm-btn-save" href="itgaziev.ozonyml_price_run.php?ID=' . $f_ID . '&lang=' . LANG . '">' . Loc::getMessage('ITGAZIEV_OZONYML_PRICE_TABLE_RUN_PROCESS') . '</a>');
 
     $arActions = array();
 
