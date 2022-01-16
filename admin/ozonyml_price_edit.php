@@ -65,7 +65,6 @@ if($next != "") {
                 'NAME'          => $_POST['NAME'],
                 'IBLOCK'        => $_POST['IBLOCK'],
                 'AGENT_TIME'    => $_POST['AGENT_TIME'],
-                'TIME_CREATE'   => new \Bitrix\Main\Type\DateTime()
             );
 
             if($ID > 0) {
@@ -78,7 +77,8 @@ if($next != "") {
                 }
             } else {
                 //TODO : Add
-                $resul = OzonYML\Table\ITGazievOzonYMLTable::add($arFields);
+                $arFields['TIME_CREATE'] = new \Bitrix\Main\Type\DateTime();
+                $result = OzonYML\Table\ITGazievOzonYMLTable::add($arFields);
                 if($result->isSuccess()) {
                     $ID = $result->getID();
                     $res = true;
@@ -170,7 +170,45 @@ echo bitrix_sessid_post();
 $tabControl->Begin();
 $tabControl->BeginNextTab();
 // TODO : edit0 html
-
+?>
+<tr>
+    <td><?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_ACTIVE") ?></td>
+    <td>
+        <input type="checkbox" name="ACTIVE" value="Y" <?=$condition['ACTIVE'] ? ($condition['ACTIVE'] == "Y" ? "checked" : "") : "checked"?>>
+    </td>
+</tr>
+<? if($ID > 0): ?>
+    <tr>
+        <td width="40%">ID:</td>
+        <td width="60%">
+            <span><?= $ID ?></span>
+            <input type="hidden" name="ID" value="<?= $ID ?>"/>
+        </td>
+    </tr>
+<? endif; ?>
+<tr>
+    <td width="40%"><span class="required">*</span><?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_NAME") ?></td>
+    <td width="60%"><input type="text" name="NAME" value="<?= $condition['NAME'] ?>" size="44" maxlength="255" /></td>
+</tr>
+<tr>
+    <td width="40%">
+        <? //ShowJSHint('Выбирети инфоблок'); ?>
+        <span class="required">*</span><?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_IBLOCK") ?>
+    </td>
+    <td>
+        <?= SelectBoxFromArray('IBLOCK', OzonYML\Main::getIBlockList(), $condition['IBLOCK'], '', 'style="min-width: 350px; margin-right: 5px;"', false, ''); ?>
+    </td>
+</tr>
+<tr>
+    <td width="40%">
+        <? //ShowJSHint('Выбирети инфоблок'); ?>
+        <?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_AGENT_TIME") ?>
+    </td>
+    <td>
+        <?= SelectBoxFromArray('AGENT_TIME', OzonYML\Main::getAgentTime(), $condition['AGENT_TIME'], '', 'style="min-width: 350px; margin-right: 5px;"', false, ''); ?>
+    </td>
+</tr>
+<?
 $tabControl->BeginNextTab();
 //TODO : edit1 html
 

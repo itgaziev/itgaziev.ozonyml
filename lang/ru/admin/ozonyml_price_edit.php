@@ -15,3 +15,7 @@ $MESS['ITGAZIEV_OZONYML_PRICE_DELETE'] = 'Удалить прайс';
 $MESS['ITGAZIEV_OZONYML_PRICE_DELETE_TITLE'] = 'Удалить прайс';
 $MESS['ITGAZIEV_OZONYML_PRICE_DELETE_CONF'] = 'Вы уверены что хотите удалить прайс?';
 $MESS['ITGAZIEV_OZONYML_PRICE_SAVED'] = 'Сохранить прайс';
+$MESS['ITGAZIEV_OZONYML_PRICE_FIELD_ACTIVE'] = 'Активный: ';
+$MESS['ITGAZIEV_OZONYML_PRICE_FIELD_NAME'] = 'Название: ';
+$MESS['ITGAZIEV_OZONYML_PRICE_FIELD_IBLOCK'] = 'Информационный блок: ';
+$MESS['ITGAZIEV_OZONYML_PRICE_FIELD_AGENT_TIME'] = 'Время выгрузки: ';
