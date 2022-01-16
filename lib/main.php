@@ -8,6 +8,7 @@ use Bitrix\Main\CIBlock;
 use Bitrix\Main\Sale;
 use Bitrix\Highloadblock as HL; 
 use Bitrix\Main\Entity;
+use Bitrix\Catalog;
 
 class Main {
     static $module_id = 'itgaziev.ozonyml';
@@ -45,5 +46,39 @@ class Main {
         $listTime['REFERENCE_ID'][4] = 4;
 
         return $listTime;
+    }
+
+    public static function getFieldIblock() {
+        $result[] = array('id' => 'ID', 'text' => 'ID');
+        $result[] = array('id' => 'NAME', 'text' => 'Название');
+        $result[] = array('id' => 'CODE', 'text' => 'Символьный код');
+        $result[] = array('id' => 'PREVIEW_TEXT', 'text' => 'Короткое описание');
+        $result[] = array('id' => 'DETAIL_TEXT', 'text' => 'Детальное описание');
+
+        return $result;
+    }
+
+    public static function getProperties($iblock) {
+        Loader::includeModule('iblock');
+        $res = \CIBlock::GetProperties($iblock, array(), array());
+        $result = [];
+
+        while($res_ar = $res->Fetch()) {
+            $result[] = array('id' => 'PROPERTY[' . $res_ar['CODE'] . ']', 'text' => '[' . $res_ar['ID' . '] ' . $res_ar['NAME']]);
+        }
+
+        return $result;
+    }
+
+    public static function getStores() {
+        $resStore = \Bitrix\Catalog\StoreTable::getList([
+            'select' => ['*'],
+            'filter' => [
+              'ACTIVE' => 'Y',
+            ]
+        ]);
+        while($arStore = $resStore->fetch()) $arStores[] = $arStore;
+
+        return $arStores;
     }
 }

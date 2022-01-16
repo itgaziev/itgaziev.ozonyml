@@ -12,6 +12,24 @@ Loc::loadMessages(__FILE__);
 
 $arJsConfig = array(
     //TODO : add js / css to header
+    'jquery-ui' => array(
+        'js' => '/bitrix/themes/.default/itgaziev.ozonyml/js/jquery-ui.min.js',
+        'css' => '/bitrix/themes/.default/itgaziev.ozonyml/css/jquery-ui.min.css',
+        'rel' => array()
+    ),
+    'jquery-ui-theme' => array(
+        'css' => '/bitrix/themes/.default/itgaziev.ozonyml/css/jquery-ui.theme.min.css',
+        'rel' => array()
+    ),
+    'jquery-select2' => array(
+        'css' => '/bitrix/themes/.default/itgaziev.ozonyml/select2/css/select2.min.css',
+        'js' => '/bitrix/themes/.default/itgaziev.ozonyml/select2/js/select2.js',
+        'rel' => array()
+    ),
+    'itgaziev.ozonyml' => array(
+        'js' => '/bitrix/js/itgaziev.ozonyml/main.js',
+        'rel' => array()
+    ),
 );
 
 foreach($arJsConfig as $ext => $arExt) \CJSCore::RegisterExt($ext, $arExt);
@@ -211,7 +229,8 @@ $tabControl->BeginNextTab();
 <?
 $tabControl->BeginNextTab();
 //TODO : edit1 html
-
+$stores = OzonYML\Main::getStores();
+echo '<pre>'; print_r($stores); echo '</pre>';
 $tabControl->BeginNextTab();
 //TODO : edit2 html
 
