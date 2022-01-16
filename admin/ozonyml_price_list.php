@@ -156,7 +156,7 @@ while($arRes = $rsData->NavNext(true, 'f_')) {
         $arActions[] = array(
             'ICON' => 'delete',
             'TEXT' => Loc::getMessage("ITGAZIEV_OZONYML_PRICE_DELETE_BTN"),
-            'ACTION' => "if(confirm('" . Log::getMessage('ITGAZIEV_OZONYML_PRICE_DELETE_CONFIRM')
+            'ACTION' => "if(confirm('".Loc::getMessage("ITGAZIEV_OZONYML_PRICE_DELETE_CONFIRM")."')) ".$lAdmin->ActionDoGroup($f_ID, "delete")
         );
     }
 
