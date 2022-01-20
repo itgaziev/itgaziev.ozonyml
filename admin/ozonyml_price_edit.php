@@ -23,11 +23,13 @@ $arJsConfig = array(
     ),
     'jquery-select2' => array(
         'css' => '/bitrix/themes/.default/itgaziev.ozonyml/select2/css/select2.min.css',
-        'js' => '/bitrix/themes/.default/itgaziev.ozonyml/select2/js/select2.js',
+        'js' => '/bitrix/modules/itgaziev.ozonyml/install/themes/.default/itgaziev.ozonyml/select2/js/select2.js?v=' . time(),
+        //'js' => '/bitrix/themes/.default/itgaziev.ozonyml/select2/js/select2.js?v=' . time(),
         'rel' => array()
     ),
     'itgaziev.ozonyml' => array(
         'js' => '/bitrix/js/itgaziev.ozonyml/main.js',
+        'css' => '/bitrix/modules/itgaziev.ozonyml/install/themes/.default/itgaziev.ozonyml.css',
         'rel' => array()
     ),
 );
@@ -69,6 +71,8 @@ if($ID > 0) {
     $condition = $result->fetch();
     if(!empty($condition['PARAMETERS'])) $condition['PARAMETERS'] = unserialize($condition['PARAMETERS']);
     if(!empty($condition['FILTERS'])) $condition['FILTERS'] = unserialize($condition['FILTERS']);
+
+    //echo '<pre>'; print_r($condition['PARAMETERS']); echo '</pre>';
 }
 
 $tabControl = new CAdminTabControl('tabControl', $aTabs, false);
@@ -107,6 +111,16 @@ if($next != "") {
             }
         } else if($tabControl_active_tab == 'edit1' && $ID > 0) {
             // TODO : Update / save paramters
+            if($ID > 0) {
+                $arFields['PARAMETERS'] = serialize($_POST['PARAMETERS']);
+                $result = OzonYML\Table\ITGazievOzonYMLTable::update($ID, $arFields);
+                if($result->isSuccess()) $res = true;
+                else {
+                    $errors = $result->getErrorMessages();
+                    $res = false;
+                }
+            }
+
         } else if($tabControl_active_tab == 'edit2' && $ID > 0) {
 
         }
@@ -210,7 +224,6 @@ $tabControl->BeginNextTab();
 </tr>
 <tr>
     <td width="40%">
-        <? //ShowJSHint('Выбирети инфоблок'); ?>
         <span class="required">*</span><?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_IBLOCK") ?>
     </td>
     <td>
@@ -219,7 +232,6 @@ $tabControl->BeginNextTab();
 </tr>
 <tr>
     <td width="40%">
-        <? //ShowJSHint('Выбирети инфоблок'); ?>
         <?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_AGENT_TIME") ?>
     </td>
     <td>
@@ -230,10 +242,86 @@ $tabControl->BeginNextTab();
 $tabControl->BeginNextTab();
 //TODO : edit1 html
 $stores = OzonYML\Main::getStores();
-echo '<pre>'; print_r($stores); echo '</pre>';
+?>
+<tr>
+    <td width="40%">
+        Артикул озон
+    </td>
+    <td>
+        <select name="PARAMETERS[SKU]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $condition['PARAMETERS']['SKU'] ?>"></select>
+    </td>
+</tr>
+<tr>
+    <td width="40%">
+        Цена без скидки
+    </td>
+    <td>
+        <select name="PARAMETERS[PRICE_BASE]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $condition['PARAMETERS']['PRICE_BASE'] ?>"></select>
+    </td>
+</tr>
+<tr>
+    <td width="40%">
+        Цена со скидкой
+    </td>
+    <td>
+        <select name="PARAMETERS[PRICE_DISCOUNT]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $condition['PARAMETERS']['PRICE_DISCOUNT'] ?>"></select>
+    </td>
+</tr>
+<tr>
+    <td width="40%">
+        Цена премиум
+    </td>
+    <td>
+        <select name="PARAMETERS[PRICE_PREMIUM]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $condition['PARAMETERS']['PRICE_PREMIUM'] ?>"></select>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" width="100%" style="text-align: center">Склады</td>
+</tr>
+<tr>
+    <td colspan="2">
+        <div class="add-row-stores-js">
+            <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem;" class="table-stores">
+                <td width="40%" style="text-align: right;" class="title-td">
+                    Склад #1
+                </td>
+                <td>
+                    <select name="PARAMETERS[OUTLETS][0][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $condition['PARAMETERS']['OUTLETS'][0]['ID'] ?>"></select>
+                    <input name="PARAMETERS[OUTLETS][0][NAME]" type="text" value="<?= $condition['PARAMETERS']['OUTLETS'][0]['NAME'] ?>" size="44" maxlength="255" placeholder="Название склада как в озон"/>
+                </td>
+            </table>
+            <? foreach($condition['PARAMETERS']['OUTLETS'] as $i => $outlets): ?>
+                <? if($i === 0) continue; ?>
+                <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem; position: relative;" class="table-stores" data-index="<?= $i ?>">
+                    <td width="40%" style="text-align: right;" class="title-td">
+                        <i class="remove-row-store" data-index="<?= $i ?>">x</i>
+                        Склад #<?= $i ?>
+                    </td>
+                    <td>
+                        <select name="PARAMETERS[OUTLETS][<?=$i?>][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $outlets['ID'] ?>"></select>
+                        <input name="PARAMETERS[OUTLETS][<?=$i?>][NAME]" type="text" value="<?= $outlets['NAME'] ?>" size="44" maxlength="255" placeholder="Название склада как в озон"/>
+                    </td>
+                </table>
+            <? endforeach; ?>
+        </div>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" style="text-align: center">
+        <button class="adm-btn-save js-add-stores" type="button" style="padding: 0.5rem 1rem;">Добавить склад</td>
+    </td>
+</tr>
+<?
+//echo '<pre>'; print_r($stores); echo '</pre>';
 $tabControl->BeginNextTab();
 //TODO : edit2 html
+?>
+<div class="box">
+    <table>
 
+    </table>
+</div>
+<?
 $tabControl->Buttons();
 
 //TODO : Buttons
@@ -244,7 +332,7 @@ switch ($tabControl_active_tab) {
         break;
     case 'edit2':
             echo '<input type="submit" name="back" value="<< Назад" title="">';
-            echo '<input type="submit" name="next" value="Далее >>" title="Перейти к следующему шагу" class="adm-btn-save">';
+            echo '<input type="submit" name="next" value="Запустить  импорт" title="Перейти к следующему шагу" class="adm-btn-save">';
             break;
     default:
         echo '<input type="submit" name="cancel" value="Отменить" onclick="top.window.location=\'itgaziev.ozonyml_price_list.php?lang='. LANG . '\'" title="' . Loc::getMessage('ITGAZIEV_OZONYML_PRICE_CANCEL') . '">';
@@ -252,14 +340,61 @@ switch ($tabControl_active_tab) {
 
 }
 $tabControl->End();
-?></form><?php
+?></form>
+<?php
 //TODO : Scripts
+
 ob_start();
 ?>
 <script>
+var data = <?= json_encode(OzonYML\Main::getArraysSelect($condition['IBLOCK'])) ?>;
+
+window.onload = () => {
+    let sku = <?= json_encode(OzonYML\Main::getFieldIblock()) ?>;
+    $('.ozonyml-price-select-js').select2({data : data, width : 'style', placeholder : 'Выберите значение'});
+}
 $(function(){
     $('.adm-detail-tab').attr('onclick', '');
     $('.adm-detail-tab:not(.adm-detail-tab-active)').addClass('adm-detail-tab-disable');
+
+    $(document).on('click', '.js-add-stores', function(e) {
+        e.preventDefault();
+        let list = $('.table-stores');
+        let index = list.length;
+        let template = `
+            <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem; position: relative;" class="table-stores" data-index="${index}">
+                <td width="40%" style="text-align: right;" class="title-td">
+                    <i class="remove-row-store" data-index="${index}">x</i>
+                    Склад #${index+1}
+                </td>
+                <td>
+                    <select name="PARAMETERS[OUTLETS][${list.length}][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js"></select>
+                    <input name="PARAMETERS[OUTLETS][${list.length}][NAME]" type="text" value="" size="44" maxlength="255" placeholder="Название склада как в озон"/>
+                </td>
+            </table>
+        `;
+
+        $('.add-row-stores-js').append(template);
+
+        $('.table-stores[data-index="' + index + '"] .ozonyml-price-select-js').select2({data : data, width : 'style', placeholder : 'Выберите значение'});
+    })
+    $(document).on('click', 'i.remove-row-store', function(){
+        let index = $(this).attr('data-index');
+        $('.table-stores[data-index="' + index + '"]').remove();
+        let reindex = 0;
+        $('.table-stores').each(function() {
+            if(reindex !== 0) {
+            $(this).attr('data-index', reindex);
+            $(this).find('select.ozonyml-price-select-js').attr('name', 'PARAMETERS[OUTLETS]['+reindex+'][ID]');
+            $(this).find('input').attr('name', 'PARAMETERS[OUTLETS]['+reindex+'][NAME]');
+            $(this).find('.title-td').html(`
+                    <i class="remove-row-store" data-index="${reindex}">x</i>
+                    Склад #${reindex+1}
+            `)
+            }
+            reindex++;
+        });
+    })
 });
 </script>
 <?
