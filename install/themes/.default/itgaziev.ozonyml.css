@@ -1,0 +1,17 @@
+.box {
+    background-color: #efefef;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+i.remove-row-store {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-style: normal;
+    font-size: 15px;
+    cursor: pointer;
+}
+.select2.select2-container {
+    width: 100%;
+}

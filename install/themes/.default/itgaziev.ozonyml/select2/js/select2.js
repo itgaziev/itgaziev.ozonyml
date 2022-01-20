@@ -5268,6 +5268,7 @@ S2.define('select2/defaults',[
      
     var selected = $element.attr('data-selected');
     if(options.data !== undefined && selected) {
+      console.log(selected)
       options.data = options.data.map((item, index) => {
         if(item.children !== undefined) {
           item.children.map(child => {

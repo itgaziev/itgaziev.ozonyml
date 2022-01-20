@@ -81,4 +81,24 @@ class Main {
 
         return $arStores;
     }
+
+    public static function getArraysSelect($iblock) {
+        $group = [
+            'text' => '',
+            'children' => [
+                array('id' => 'self', 'text' => 'Свое значение')
+            ]
+        ];
+
+        $result[] = $group;
+
+        $group = [
+            'text' => 'Поля инфоблока',
+            'children' => self::getFieldIblock()
+        ];
+
+        $result[] = $group;
+
+        return $result;
+    }
 }
