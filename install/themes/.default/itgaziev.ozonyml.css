@@ -1,3 +1,9 @@
+.input-class {
+    max-width: 320px;
+}
+table.table-stores {
+    width: 100%;
+}
 .box {
     background-color: #efefef;
     padding: 1rem 2rem;
@@ -13,5 +19,61 @@ i.remove-row-store {
     cursor: pointer;
 }
 .select2.select2-container {
+    width: 100%;
+}
+
+span.add-rule {
+    text-decoration: underline;
+    font-size: 12px;
+    text-transform: lowercase;
+    color: #97ba00;
+    text-decoration-style: dashed;
+    cursor: pointer;
+}
+
+span.remove-rule {
+    text-decoration: underline;
+    font-size: 12px;
+    text-transform: lowercase;
+    color: #ba5a00;
+    text-decoration-style: dashed;
+    cursor: pointer;
+}
+span.remove-rule-group {
+    text-decoration: underline;
+    font-size: 12px;
+    text-transform: lowercase;
+    color: #ba5a00;
+    text-decoration-style: dashed;
+    cursor: pointer;
+}
+.add-rule-group {
+    text-decoration: underline;
+    font-size: 12px;
+    text-transform: lowercase;
+    color: #97ba00;
+    text-decoration-style: dashed;
+    cursor: pointer;
+}
+.condition-rule-item > .colums {
+    margin-right: 1rem;
+}
+.condition-rule-item > .colums:last-child {
+    margin-right: 0;
+}
+.condition-rule-item > .colums:nth-child(2), .condition-rule-item > .colums:nth-child(4) {
+    width: 20%;
+}
+
+.condition-rule-item > .colums:nth-child(1), .condition-rule-item > .colums:nth-child(3) {
+    width: 30%;
+}
+
+.condition-rule-item {
+    display: flex;
+    flex-direction: row;
+}
+
+select.condition-select, .condition-input {
     width: 100%;
 }

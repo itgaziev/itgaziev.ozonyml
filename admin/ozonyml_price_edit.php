@@ -3,6 +3,10 @@ use ITGaziev\OzonYML;
 use Bitrix\Main;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Page\Asset;
+use Bitrix\Main\Loader;
+use Bitrix\Main\CIBlock;
+use Bitrix\Highloadblock as HL; 
+use Bitrix\Main\Entity;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_admin_before.php';
 
@@ -28,7 +32,8 @@ $arJsConfig = array(
         'rel' => array()
     ),
     'itgaziev.ozonyml' => array(
-        'js' => '/bitrix/js/itgaziev.ozonyml/main.js',
+        //'js' => '/bitrix/js/itgaziev.ozonyml/main.js',
+        'js' => '/bitrix/modules/itgaziev.ozonyml/install/assets/js/main.js',
         'css' => '/bitrix/modules/itgaziev.ozonyml/install/themes/.default/itgaziev.ozonyml.css',
         'rel' => array()
     ),
@@ -72,13 +77,12 @@ if($ID > 0) {
     if(!empty($condition['PARAMETERS'])) $condition['PARAMETERS'] = unserialize($condition['PARAMETERS']);
     if(!empty($condition['FILTERS'])) $condition['FILTERS'] = unserialize($condition['FILTERS']);
 
-    //echo '<pre>'; print_r($condition['PARAMETERS']); echo '</pre>';
+    //echo '<pre>'; print_r($condition); echo '</pre>';
 }
 
 $tabControl = new CAdminTabControl('tabControl', $aTabs, false);
 
 $tabAction = isset($_GET['tabControl_active_tab']) && !empty($_GET['tabControl_active_tab']) ? $_GET['tabControl_active_tab'] : 'edit0';
-
 if($next != "") {
     if($REQUEST_METHOD == 'POST' && $POST_RIGHT == 'W' && check_bitrix_sessid()) {
         if($tabControl_active_tab == 'edit0' || empty($tabControl_active_tab)) {
@@ -122,6 +126,23 @@ if($next != "") {
             }
 
         } else if($tabControl_active_tab == 'edit2' && $ID > 0) {
+            $arPost = [];
+
+            foreach($_POST['CONDITION'] as $group) {
+                $groups = [];
+                foreach($group as $cond) {
+                    $groups[] = $cond;
+                }
+
+                $arPost[] = $groups;
+            }
+            $arFields['FILTERS'] = serialize($arPost);
+            $result = OzonYML\Table\ITGazievOzonYMLTable::update($ID, $arFields);
+            if($result->isSuccess()) $res = true;
+            else {
+                $errors = $result->getErrorMessages();
+                $res = false;
+            }
 
         }
 
@@ -132,6 +153,7 @@ if($next != "") {
                 LocalRedirect("/bitrix/admin/itgaziev.ozonyml_price_edit.php?ID=".$ID."&mess=ok&lang=".LANG."&tabControl_active_tab=edit2");
             } else if($tabControl_active_tab == 'edit2') {
                 // TODO : Redirect to run proccess
+                LocalRedirect("/bitrix/admin/itgaziev.ozonyml_price_edit.php?ID=".$ID."&mess=ok&lang=".LANG."&tabControl_active_tab=edit2");
             }
         }
     }
@@ -202,6 +224,7 @@ echo bitrix_sessid_post();
 $tabControl->Begin();
 $tabControl->BeginNextTab();
 // TODO : edit0 html
+//if(empty($tabControl_active_tab) || $tabControl_active_tab == 'edit0'):
 ?>
 <tr>
     <td><?= Loc::getMessage("ITGAZIEV_OZONYML_PRICE_FIELD_ACTIVE") ?></td>
@@ -239,9 +262,12 @@ $tabControl->BeginNextTab();
     </td>
 </tr>
 <?
+//endif; //end edit0
+
 $tabControl->BeginNextTab();
+
 //TODO : edit1 html
-$stores = OzonYML\Main::getStores();
+if($tabControl_active_tab == 'edit1'):
 ?>
 <tr>
     <td width="40%">
@@ -276,22 +302,12 @@ $stores = OzonYML\Main::getStores();
     </td>
 </tr>
 <tr>
-    <td colspan="2" width="100%" style="text-align: center">Склады</td>
+    <td colspan="2" width="100%" style="text-align: center"><h2>Склады</h2></td>
 </tr>
 <tr>
     <td colspan="2">
         <div class="add-row-stores-js">
-            <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem;" class="table-stores">
-                <td width="40%" style="text-align: right;" class="title-td">
-                    Склад #1
-                </td>
-                <td>
-                    <select name="PARAMETERS[OUTLETS][0][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $condition['PARAMETERS']['OUTLETS'][0]['ID'] ?>"></select>
-                    <input name="PARAMETERS[OUTLETS][0][NAME]" type="text" value="<?= $condition['PARAMETERS']['OUTLETS'][0]['NAME'] ?>" size="44" maxlength="255" placeholder="Название склада как в озон"/>
-                </td>
-            </table>
             <? foreach($condition['PARAMETERS']['OUTLETS'] as $i => $outlets): ?>
-                <? if($i === 0) continue; ?>
                 <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem; position: relative;" class="table-stores" data-index="<?= $i ?>">
                     <td width="40%" style="text-align: right;" class="title-td">
                         <i class="remove-row-store" data-index="<?= $i ?>">x</i>
@@ -299,7 +315,7 @@ $stores = OzonYML\Main::getStores();
                     </td>
                     <td>
                         <select name="PARAMETERS[OUTLETS][<?=$i?>][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js" data-selected="<?= $outlets['ID'] ?>"></select>
-                        <input name="PARAMETERS[OUTLETS][<?=$i?>][NAME]" type="text" value="<?= $outlets['NAME'] ?>" size="44" maxlength="255" placeholder="Название склада как в озон"/>
+                        <input name="PARAMETERS[OUTLETS][<?=$i?>][NAME]" type="text" value="<?= $outlets['NAME'] ?>" size="44" maxlength="255" placeholder="Название склада как в озон" class="input-class"/>
                     </td>
                 </table>
             <? endforeach; ?>
@@ -312,16 +328,58 @@ $stores = OzonYML\Main::getStores();
     </td>
 </tr>
 <?
-//echo '<pre>'; print_r($stores); echo '</pre>';
-$tabControl->BeginNextTab();
-//TODO : edit2 html
-?>
-<div class="box">
-    <table>
+endif; //end edit1
 
-    </table>
-</div>
-<?
+$tabControl->BeginNextTab();
+
+//TODO : edit2 html
+if($tabControl_active_tab == 'edit2'):
+?>
+<tr>
+    <td colspan="2">
+        <div class="box-wrapper">
+            <div class="box-add">
+                <? if(!empty($condition['FILTERS'])): ?>
+                <? foreach($condition['FILTERS'] as $group => $filter): ?>
+                <div class="box" data-group="<?= $group ?>">
+                    <div class="condition-add">
+                        <? foreach($filter as $index => $rule): ?>
+                        <? 
+                        $optionsValues = ['group' => $group, 'index' => $index];    
+                        $temp = OzonYML\Main::getChangesValues($rule, $condition['IBLOCK'], $optionsValues); 
+                        ?>
+                        <div class="condition-rule-item" data-index="<?= $index ?>">
+                            <div class="colums condition-rule-item__attribute">
+                                <select name="CONDITION[<?= $group ?>][<?= $index ?>][attribute]" class="condition-select condition-attribute-select" data-selected="<?= $rule['attribute'] ?>"></select>
+                            </div>
+                            <div class="colums condition-rule-item__compare">
+                                <select name="CONDITION[<?= $group ?>][<?= $index ?>][compare]" class="condition-select condition-compare-select" data-selected="<?= $rule['compare'] ?>"></select>
+                            </div>
+                            <div class="colums condition-rule-item__values">
+                                <?= $temp ?>
+                            </div>
+                            <div class="colums condition-rule-item__remove">
+                                <span class="remove-rule">Удалить условие</span>
+                            </div>
+                        </div>
+                        <? endforeach; ?>
+                    </div>
+                    <div class="footer-box">
+                        <span class="add-rule">Добавить условие</span>
+                        <span class="remove-rule-group">Удалить группу</span>
+                    </div>
+                </div>
+                <? endforeach; ?>
+                <? endif; ?>
+            </div>
+            <span class="add-rule-group">Добавить группу</span>
+        </div>
+
+    </td>
+</tr>
+
+<? endif; //end edit2
+
 $tabControl->Buttons();
 
 //TODO : Buttons
@@ -343,58 +401,99 @@ $tabControl->End();
 ?></form>
 <?php
 //TODO : Scripts
-
 ob_start();
 ?>
 <script>
-var data = <?= json_encode(OzonYML\Main::getArraysSelect($condition['IBLOCK'])) ?>;
+<? if($tabControl_active_tab == 'edit1'): ?>
+    var data = <?= json_encode(OzonYML\Main::getArraysSelect($condition['IBLOCK'])) ?>;
 
-window.onload = () => {
-    let sku = <?= json_encode(OzonYML\Main::getFieldIblock()) ?>;
-    $('.ozonyml-price-select-js').select2({data : data, width : 'style', placeholder : 'Выберите значение'});
-}
+    window.onload = () => {
+        $('.ozonyml-price-select-js').select2({data : data.select, width : 'style', placeholder : 'Выберите значение'});
+
+        $(document).on('click', '.js-add-stores', function(e) {
+            e.preventDefault();
+            let list = $('.table-stores');
+            let index = list.length;
+            let template = `
+                <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem; position: relative;" class="table-stores" data-index="${index}">
+                    <td width="40%" style="text-align: right;" class="title-td">
+                        <i class="remove-row-store" data-index="<?= $index ?>">x</i>
+                        Склад #${index+1}
+                    </td>
+                    <td>
+                        <select name="PARAMETERS[OUTLETS][${list.length}][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js"></select>
+                        <input name="PARAMETERS[OUTLETS][${list.length}][NAME]" type="text" value="" size="44" maxlength="255" placeholder="Название склада как в озон"/>
+                    </td>
+                </table>
+            `;
+
+            $('.add-row-stores-js').append(template);
+
+            $('.table-stores[data-index="' + index + '"] .ozonyml-price-select-js').select2({data : data.select, width : 'style', placeholder : 'Выберите значение'});
+        })
+        $(document).on('click', 'i.remove-row-store', function(){
+            let index = $(this).attr('data-index');
+            $('.table-stores[data-index="' + index + '"]').remove();
+            let reindex = 0;
+            $('.table-stores').each(function() {
+                $(this).attr('data-index', reindex);
+                $(this).find('select.ozonyml-price-select-js').attr('name', 'PARAMETERS[OUTLETS]['+reindex+'][ID]');
+                $(this).find('input').attr('name', 'PARAMETERS[OUTLETS]['+reindex+'][NAME]');
+                $(this).find('.title-td').html(`
+                        <i class="remove-row-store" data-index="${reindex}">x</i>
+                        Склад #${reindex+1}
+                `)
+                reindex++;
+            });
+        })
+    };
+<? elseif($tabControl_active_tab == 'edit2'): ?>
+    var data = <?= json_encode(OzonYML\Main::getArraysSelect($condition['IBLOCK'])) ?>;
+    var compare = <?= json_encode(OzonYML\Main::getArrayCompareType()) ?>;
+
+    window.onload = () => {
+        const condition = new ITGazievCondition({iblock : 7, data : data, compare : compare});
+        let sku = <?= json_encode(OzonYML\Main::getFieldIblock()) ?>;
+        $('.ozonyml-price-select-js').select2({data : data.select, width : 'style', placeholder : 'Выберите значение'});
+        condition.init();
+        $('.condition-attribute-select').each(function() {
+            let group = $(this).closest('.box').attr('data-group');
+            let index = $(this).closest('.condition-rule-item').attr('data-index');
+            condition.compareType($(this).val(), group, index, false);
+            condition.templateCompareDefault($(this).val(), group, index);
+        })
+
+        $(document).on('change', '.condition-attribute-select', function() {
+            let group = $(this).closest('.box').attr('data-group');
+            let index = $(this).closest('.condition-rule-item').attr('data-index');
+            condition.templateCompare($(this).val(), group, index);
+            condition.compareType($(this).val(), group, index);
+        });
+        $(document).on('click', '.remove-rule', function() {
+            let group_id = $(this).closest('.box').attr('data-group');
+            $(this).closest('.condition-rule-item').remove();    
+        });
+        $(document).on('click', '.add-rule', function() {
+            let group_id = $(this).closest('.box').attr('data-group');
+            let lastIndex = condition.getLastIndexRule(group_id);
+
+            condition.addRule(group_id, lastIndex);
+        })
+
+        $(document).on('click', '.add-rule-group', function() {
+            condition.addBox();
+        })
+
+        $(document).on('click', '.remove-rule-group', function() {
+            let group_id = $(this).closest('.box').attr('data-group');
+            condition.removeBox(group_id);
+        })
+
+    }
+<? endif; ?>
 $(function(){
     $('.adm-detail-tab').attr('onclick', '');
     $('.adm-detail-tab:not(.adm-detail-tab-active)').addClass('adm-detail-tab-disable');
-
-    $(document).on('click', '.js-add-stores', function(e) {
-        e.preventDefault();
-        let list = $('.table-stores');
-        let index = list.length;
-        let template = `
-            <table style="background-color: #ccc; padding: 1rem; margin-bottom: 1rem; position: relative;" class="table-stores" data-index="${index}">
-                <td width="40%" style="text-align: right;" class="title-td">
-                    <i class="remove-row-store" data-index="${index}">x</i>
-                    Склад #${index+1}
-                </td>
-                <td>
-                    <select name="PARAMETERS[OUTLETS][${list.length}][ID]" style="min-width: 350px; margin-right: 5px;" class="ozonyml-price-select-js"></select>
-                    <input name="PARAMETERS[OUTLETS][${list.length}][NAME]" type="text" value="" size="44" maxlength="255" placeholder="Название склада как в озон"/>
-                </td>
-            </table>
-        `;
-
-        $('.add-row-stores-js').append(template);
-
-        $('.table-stores[data-index="' + index + '"] .ozonyml-price-select-js').select2({data : data, width : 'style', placeholder : 'Выберите значение'});
-    })
-    $(document).on('click', 'i.remove-row-store', function(){
-        let index = $(this).attr('data-index');
-        $('.table-stores[data-index="' + index + '"]').remove();
-        let reindex = 0;
-        $('.table-stores').each(function() {
-            if(reindex !== 0) {
-            $(this).attr('data-index', reindex);
-            $(this).find('select.ozonyml-price-select-js').attr('name', 'PARAMETERS[OUTLETS]['+reindex+'][ID]');
-            $(this).find('input').attr('name', 'PARAMETERS[OUTLETS]['+reindex+'][NAME]');
-            $(this).find('.title-td').html(`
-                    <i class="remove-row-store" data-index="${reindex}">x</i>
-                    Склад #${reindex+1}
-            `)
-            }
-            reindex++;
-        });
-    })
 });
 </script>
 <?
